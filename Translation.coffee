@@ -2,7 +2,7 @@ angular.module('translation').
 factory('translation', ($q, $http, db)->
   return (options) ->
     defer = $q.defer()
-    $http.get(db.name + '/local-' + options.key).then(
+    $http.get("#{db.url}/local-#{options.key}").then(
       (data) -> # Success
         data = data.data
         delete data._id
