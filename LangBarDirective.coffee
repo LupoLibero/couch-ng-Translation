@@ -1,5 +1,5 @@
 angular.module('translation').
-directive('langBar', () ->
+directive('langBar', ($rootScope) ->
   return {
     restrict: 'E'
     scope: {
@@ -11,7 +11,7 @@ directive('langBar', () ->
                 '<img src="img/country-flags-png/{{key}}.png"/>'+
               '</button>'+
               '<div class="btn-group">'+
-                '<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">[+]</button>'+
+                '<button ng-disabled="disable" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">[+]</button>'+
                 '<ul class="dropdown-menu">'+
                   '<li ng-repeat="(key, value) in allLangs">'+
                     '<a ng-click="addLangue(key)"><img src="img/country-flags-png/{{key}}.png"/> {{value}}</a>'+
@@ -28,16 +28,24 @@ directive('langBar', () ->
       scope.noOtherLangs = ->
         return Object.keys(scope.allLangs).length == 0
 
+      $rootScope.$on('SignIn', ->
+        scope.disable = false
+      )
+
+      $rootScope.$on('SignOut', ->
+        scope.disable = true
+      )
+
       # Change between available language
       scope.changeLangue = (key) ->
         scope.lang = key
-        scope.$emit('ChangeLanguage', key)
+        $rootScope.$emit('ChangeLanguage', key)
 
       # Add a new language
       scope.addLangue = (key) ->
         scope.lang = key
         scope.langs[key] = true
         delete scope.allLangs[key]
-        scope.$emit('NewLanguage', key)
+        $rootScope.$emit('NewLanguage', key)
   }
 )
