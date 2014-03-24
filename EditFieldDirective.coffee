@@ -7,18 +7,24 @@ directive('editField', ->
       type:    '@'
       lang:    '='
       save:    '&'
-    template: '<input ng-show="type == \'input\' && translation == true" type="text" ng-model="saveValue" disabled/>'+
-              '<input ng-show="type == \'input\'" ng-disabled="onLoad()" ng-keyup="change()" type="text" ng-model="ngModel"/>'+
-              '<textarea ng-show="type == \'textarea\' && translation == true" ng-model="saveValue" disabled></textarea>'+
-              '<textarea ng-show="type == \'textarea\'" ng-disabled="onLoad()" ng-keyup="change()" ng-model="ngModel"></textarea>'+
-              '<span ng-show="onLoad()" us-spinner="{width:2,length:6,radius:5}"></span>'+
-              '<span ng-show="onChange()">'+
+    template: '<span ng-hide="edit" ng-click="edit=true" type="text">{{ saveValue }}</span>'+
+
+              '<input ng-show="type==\'input\' && translation" type="text" ng-model="saveValue" disabled/>'+
+              '<input ng-show="type==\'input\' && edit       " type="text" ng-model="ngModel" style="width:80%" ng-disabled="loading" ng-keypress="keypress($event)" />'+
+
+              '<textarea ng-show="type == \'textarea\' && translation" ng-model="saveValue" disabled></textarea>'+
+              '<textarea ng-show="type == \'textarea\' && edit       " ng-model="ngModel" ng-disabled="loading" ng-keyup="change=true"></textarea>'+
+
+              '<span ng-show="loading" us-spinner="{width:2,length:6,radius:5}"></span>'+
+
+              '<span ng-show="edit && !loading">'+
                 '<button ng-click="goSave()" class="btn btn-default glyphicon glyphicon-ok"     style="color:green;"></button>'+
                 '<button ng-click="cancel()" class="btn btn-default glyphicon glyphicon-remove" style="color:red;  "></button>'+
               '</span>'
 
     link: (scope, element, attrs) ->
-      scope.haveChange = false
+      scope.change = false
+      scope.edit   = false
 
       scope.$on('EditFieldTranslationOn', ->
         scope.translation = true
@@ -29,30 +35,31 @@ directive('editField', ->
         scope.translation = false
       )
 
-      scope.change = ->
-        scope.haveChange = true
+      scope.keypress = ($event) ->
+        console.log $event.key
+        if $event.key == 'Enter'
+          scope.goSave()
+        else
+          scope.change = true
 
       scope.goSave = ->
-        scope.haveChange = false
+        if scope.change == false
+          return scope.cancel()
+
         scope.loading = true
         scope.save().then(
           (data) -> #Success
-            scope.loading = false
+            scope.loading     = false
             scope.translation = false
-            scope.saveValue = angular.copy(scope.ngModel)
+            scope.edit        = false
+            scope.saveValue   = angular.copy(scope.ngModel)
           ,(err) -> #Error
-            scope.haveChange = true
             scope.loading = false
         )
 
-      scope.onChange = ->
-        return scope.haveChange
-
-      scope.onLoad = ->
-        return scope.loading
-
       scope.cancel = ->
-        scope.ngModel    = scope.saveValue
-        scope.haveChange = false
+        scope.ngModel = scope.saveValue
+        scope.edit    = false
+        scope.change  = false
   }
 )
