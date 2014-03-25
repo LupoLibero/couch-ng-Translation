@@ -1,4 +1,4 @@
-var fields = require('lib/types');
+var fields = require('modules/ITS/types');
 
 exports.registerTranslation = function (doc, form, type, element, lang) {
   // If the lang is not passed throw an error
