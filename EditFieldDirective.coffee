@@ -7,13 +7,13 @@ directive('editField', ->
       type:    '@'
       lang:    '='
       save:    '&'
-    template: '<span ng-hide="edit" ng-click="edit=true" type="text">{{ saveValue }}</span>'+
+    template: '<span ng-hide="edit" ng-click="edit=true" type="text">{{ ngModel }}</span>'+
 
-              '<input ng-show="type==\'input\' && translation" type="text" ng-model="saveValue" disabled/>'+
-              '<input ng-show="type==\'input\' && edit       " type="text" ng-model="ngModel" style="width:80%" ng-disabled="loading" ng-keypress="keypress($event)" focus="edit" ng-blur="edit=false"/>'+
+              '<input ng-show="type==\'input\' && translation" type="text" ng-model="ngModel" disabled/>'+
+              '<input ng-show="type==\'input\' && edit       " type="text" ng-model="value" style="width:80%" ng-disabled="loading" ng-keypress="keypress($event)" focus="edit" ng-blur="edit=false"/>'+
 
-              '<textarea ng-show="type == \'textarea\' && translation" ng-model="saveValue" disabled></textarea>'+
-              '<textarea ng-show="type == \'textarea\' && edit       " ng-model="ngModel" ng-disabled="loading" ng-keyup="change=true" focus="edit" ng-blur="edit=false"></textarea>'+
+              '<textarea ng-show="type == \'textarea\' && translation" ng-model="ngModel" disabled></textarea>'+
+              '<textarea ng-show="type == \'textarea\' && edit       " ng-model="value" ng-disabled="loading" ng-keyup="change=true" focus="edit" ng-blur="edit=false"></textarea>'+
 
               '<span ng-show="loading" us-spinner="{width:2,length:6,radius:5}"></span>'+
 
@@ -31,15 +31,16 @@ directive('editField', ->
         scope.ngModel     = ''
       )
       scope.$watch('lang', ->
-        scope.saveValue = angular.copy(scope.ngModel)
+        scope.value       = angular.copy(scope.ngModel)
         scope.translation = false
       )
 
       scope.keypress = ($event) ->
         if $event.key == 'Enter'
           scope.goSave()
-        else if $event.key == 'Echap'
+        else if $event.key == 'Esc'
           scope.edit = false
+          $event.preventDefault()
         else
           scope.change = true
 
@@ -48,18 +49,19 @@ directive('editField', ->
           return scope.cancel()
 
         scope.loading = true
-        scope.save().then(
+
+        scope.save({value:scope.value}).then(
           (data) -> #Success
             scope.loading     = false
             scope.translation = false
             scope.edit        = false
-            scope.saveValue   = angular.copy(scope.ngModel)
+            scope.ngModel     = angular.copy(scope.value)
           ,(err) -> #Error
             scope.loading = false
         )
 
       scope.cancel = ->
-        scope.ngModel = scope.saveValue
+        scope.value   = scope.ngModel
         scope.edit    = false
         scope.change  = false
   }
