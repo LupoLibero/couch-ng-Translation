@@ -10,10 +10,10 @@ directive('editField', ->
     template: '<span ng-hide="edit" ng-click="edit=true" type="text">{{ saveValue }}</span>'+
 
               '<input ng-show="type==\'input\' && translation" type="text" ng-model="saveValue" disabled/>'+
-              '<input ng-show="type==\'input\' && edit       " type="text" ng-model="ngModel" style="width:80%" ng-disabled="loading" ng-keypress="keypress($event)" />'+
+              '<input ng-show="type==\'input\' && edit       " type="text" ng-model="ngModel" style="width:80%" ng-disabled="loading" ng-keypress="keypress($event)" focus="edit" ng-blur="edit=false"/>'+
 
               '<textarea ng-show="type == \'textarea\' && translation" ng-model="saveValue" disabled></textarea>'+
-              '<textarea ng-show="type == \'textarea\' && edit       " ng-model="ngModel" ng-disabled="loading" ng-keyup="change=true"></textarea>'+
+              '<textarea ng-show="type == \'textarea\' && edit       " ng-model="ngModel" ng-disabled="loading" ng-keyup="change=true" focus="edit" ng-blur="edit=false"></textarea>'+
 
               '<span ng-show="loading" us-spinner="{width:2,length:6,radius:5}"></span>'+
 
@@ -36,9 +36,10 @@ directive('editField', ->
       )
 
       scope.keypress = ($event) ->
-        console.log $event.key
         if $event.key == 'Enter'
           scope.goSave()
+        else if $event.key == 'Echap'
+          scope.edit = false
         else
           scope.change = true
 

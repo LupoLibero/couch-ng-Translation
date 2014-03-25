@@ -1,1 +1,1 @@
-angular.module('translation', ['pascalprecht.translate', 'angularSpinner'])
+angular.module('translation', ['pascalprecht.translate', 'angularSpinner', 'directive'])
