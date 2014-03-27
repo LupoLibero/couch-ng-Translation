@@ -36,11 +36,12 @@ directive('editField', ->
       )
 
       scope.keypress = ($event) ->
-        if $event.key == 'Enter'
+        if $event.key == 'Enter' && scope.type == 'input'
+          scope.goSave()
+        else if $event.key == 'Enter' && $event.ctrlKey
           scope.goSave()
         else if $event.key == 'Esc'
           scope.edit = false
-          $event.preventDefault()
         else
           scope.change = true
 
