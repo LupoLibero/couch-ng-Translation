@@ -1,5 +1,5 @@
 angular.module('translation').
-directive('editField', ->
+directive('editField', ($timeout)->
   return {
     restrict: 'E'
     scope:
@@ -10,10 +10,10 @@ directive('editField', ->
     template: '<span ng-hide="edit" ng-click="edit=true" type="text">{{ ngModel }}</span>'+
 
               '<input ng-show="type==\'input\' && translation" type="text" ng-model="ngModel" disabled/>'+
-              '<input ng-show="type==\'input\' && edit       " type="text" ng-model="value" style="width:80%" ng-disabled="loading" ng-keypress="keypress($event)" focus="edit" ng-blur="edit=false"/>'+
+              '<input ng-show="type==\'input\' && edit       " type="text" ng-model="value" style="width:80%" ng-disabled="loading" ng-keypress="keypress($event)" focus="edit" ng-blur="blur()"/>'+
 
               '<textarea ng-show="type == \'textarea\' && translation" ng-model="ngModel" disabled></textarea>'+
-              '<textarea ng-show="type == \'textarea\' && edit       " ng-model="value" ng-disabled="loading" ng-keyup="change=true" focus="edit" ng-blur="edit=false"></textarea>'+
+              '<textarea ng-show="type == \'textarea\' && edit       " ng-model="value" ng-disabled="loading" ng-blur="blur()" ng-keypress="keypress($event)" focus="edit" ></textarea>'+
 
               '<span ng-show="loading" us-spinner="{width:2,length:6,radius:5}"></span>'+
 
@@ -34,6 +34,11 @@ directive('editField', ->
         scope.value       = angular.copy(scope.ngModel)
         scope.translation = false
       )
+
+      scope.blur = ->
+        $timeout( ->
+          scope.edit = false
+        , 300)
 
       scope.keypress = ($event) ->
         if $event.key == 'Enter' && scope.type == 'input'
