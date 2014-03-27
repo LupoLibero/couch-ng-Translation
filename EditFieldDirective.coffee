@@ -41,11 +41,14 @@ directive('editField', ($timeout)->
         , 300)
 
       scope.keypress = ($event) ->
-        if $event.key == 'Enter' && scope.type == 'input'
+        console.log $event
+        if $event.keyCode == 13 && scope.type == 'input'
           scope.goSave()
-        else if $event.key == 'Enter' && $event.ctrlKey
+        else if $event.keyCode == 13 && $event.ctrlKey
           scope.goSave()
-        else if $event.key == 'Esc'
+        else if $event.keyCode == 10 && $event.ctrlKey # For ctrl+enter for Chrome
+          scope.goSave()
+        else if $event.key == 27
           scope.edit = false
         else
           scope.change = true
