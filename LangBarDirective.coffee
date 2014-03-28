@@ -6,46 +6,55 @@ directive('langBar', ($rootScope) ->
       langs:     '='
       allLangs:  '='
       lang:      '='
+      nbCard:    '='
     }
-    template: '<button ng-repeat="(key, value) in langs" class="btn btn-default" ng-class="{active: key == lang}" ng-click="changeLangue(key)">'+
-                '<img src="img/country-flags-png/{{key}}.png"/>'+
-              '</button>'+
-              '<div class="btn-group">'+
-                '<button ng-disabled="disable" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">[+]</button>'+
+    template: '<div class="btn-group">'+
+                '<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">'+
+                  '<img src="img/country-flags-png/{{lang}}.png"/>'+
+                  '<span class="caret"></span>'+
+                '</button>'+
+                '<ul class="dropdown-menu">'+
+                  '<li ng-repeat="(key, value) in langs">'+
+                    '<a ng-click="changeLangue(key)"><img src="img/country-flags-png/{{key}}.png"/> ({{ (value / nbCard * 100).toFixed(2) }} %)</a>'+
+                  '</li>'+
+                '</ul>'+
+              '</div>'+
+              '<div class="btn-group" ng-hide="translateMode">'+
+                '<button ng-disabled="disable" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">'+
+                  'Help Translate'+
+                '</button>'+
                 '<ul class="dropdown-menu">'+
                   '<li ng-repeat="(key, value) in allLangs">'+
-                    '<a ng-click="addLangue(key)"><img src="img/country-flags-png/{{key}}.png"/> {{value}}</a>'+
+                    '<a ng-click="addLangue(key)"><img src="img/country-flags-png/{{key}}.png"/>{{value}}</a>'+
                   '</li>'+
-                  '<li ng-if="noOtherLangs()">No other language is available</li>'+
                 '</ul>'+
-              '</div>'
-    link: (scope, element, attrs) ->
-      # Delete from the list all the available languages
-      for key of scope.langs
-        delete scope.allLangs[key]
+              '</div>'+
+              '<button ng-show="translateMode" ng-click="stopTranslate()" ng-disabled="disable" class="btn btn-default">'+
+                'Stop Translate'+
+              '</button>'
 
-      # If no other language available
-      scope.noOtherLangs = ->
-        return Object.keys(scope.allLangs).length == 0
+    link: (scope, element, attrs) ->
+      scope.translateMode = false
 
       $rootScope.$on('SignIn', ->
         scope.disable = false
       )
-
       $rootScope.$on('SignOut', ->
         scope.disable = true
       )
 
-      # Change between available language
       scope.changeLangue = (key) ->
         scope.lang = key
-        $rootScope.$emit('ChangeLanguage', key)
+        $rootScope.$broadcast('LangBarChangeLanguage', key)
 
-      # Add a new language
       scope.addLangue = (key) ->
-        scope.lang = key
-        scope.langs[key] = true
-        delete scope.allLangs[key]
-        $rootScope.$emit('NewLanguage', key)
+        scope.translateMode = true
+        scope.lang          = key
+        scope.langs[key]    = 0
+        $rootScope.$broadcast('LangBarNewLanguage', key)
+
+      scope.stopTranslate = ->
+        scope.translateMode = false
+        $rootScope.$broadcast('LangBarStopTranslate')
   }
 )
