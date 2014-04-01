@@ -41,7 +41,6 @@ directive('editField', ($timeout)->
         , 300)
 
       scope.keypress = ($event) ->
-        console.log $event
         if $event.keyCode == 13 && scope.type == 'input'
           scope.goSave()
         else if $event.keyCode == 13 && $event.ctrlKey
