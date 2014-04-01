@@ -1,7 +1,6 @@
 var fields = require('modules/ITS/types');
 
 exports.registerTranslation = function (doc, form, type, element, lang) {
-  // If the lang is not passed throw an error
   if(lang == undefined) {
     throw({forbidden: 'No language code'});
   }
@@ -22,11 +21,21 @@ exports.registerTranslation = function (doc, form, type, element, lang) {
   if(typeof doc[element] != 'object') {
     var saved = doc[element];
     doc[element] = {}
+
     if(doc.hasOwnProperty('init_lang')){
-      doc[element][doc.init_lang] = saved;
+      doc[element][doc.init_lang] = {
+        content: saved,
+      }
     } else {
-      doc[element]['default'] = saved;
+      doc[element]['default'] = {
+        content: saved,
+      }
     }
   }
-  doc[element][lang] = value;
+  doc[element][lang] = {
+    content: value,
+  }
+  if(doc.hasOwnProperty('_rev')){
+    doc[element][lang]._rev = doc._rev
+  }
 }
