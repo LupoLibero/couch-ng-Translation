@@ -8,10 +8,10 @@ run( (gettextCatalog, Local, $rootScope)->
       (data) -> #Success
         gettextCatalog.setStrings(language, data)
         gettextCatalog.currentLanguage = language
-        $rootScope.$broadcast('$translateChangeSuccess')
+        $rootScope.$broadcast('$translateChangeSuccess', language)
       ,(err) -> #Error
         if language != 'en'
-          $rootScope.$broadcast('$translateChangeError')
+          $rootScope.$broadcast('$translateChangeError', language)
     )
   )
 )
