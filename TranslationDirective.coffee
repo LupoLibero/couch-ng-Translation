@@ -19,8 +19,9 @@ directive('translation', ($compile, $rootScope, $timeout, $filter)->
       scope.edit        = false
 
       $rootScope.$on('LangBarNewLanguage', ($event, lang)->
-        scope.textTranslated = (if scope.lang is lang then scope.text else '')
-        scope.translation    = true
+        scope.textTranslated  = (if scope.lang is lang then scope.text else '')
+        scope.translation     = true
+        scope.translationLang = lang
       )
       $rootScope.$on('LangBarStopTranslate', ->
         scope.translation = false
@@ -61,7 +62,7 @@ directive('translation', ($compile, $rootScope, $timeout, $filter)->
             field: scope.field
             key:   scope.expr
             id:    id
-            lang:  scope.lang
+            lang:  scope.translationLang
           })
   }
 )
