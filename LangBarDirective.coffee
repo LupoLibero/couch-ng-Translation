@@ -49,6 +49,7 @@ directive('langBar', ($rootScope) ->
         scope.stopTranslate()
 
       scope.addLangue = (key) ->
+        $rootScope.$broadcast('LangBarChangeLanguage', key)
         scope.translateMode = true
         scope.lang          = key
         scope.langs[key]    = scope.langs[key] || 0
