@@ -1,6 +1,6 @@
 var fields = require('modules/ITS/types');
 
-exports.registerTranslation = function (doc, form, type, element, lang) {
+exports.registerTranslation = function (doc, form, type, element, lang, rev) {
   if(lang == undefined) {
     throw({forbidden: 'No language code'});
   }
@@ -34,8 +34,6 @@ exports.registerTranslation = function (doc, form, type, element, lang) {
   }
   doc[element][lang] = {
     content: value,
-  }
-  if(doc.hasOwnProperty('_rev')){
-    doc[element][lang]._rev = doc._rev
+    _rev:    rev,
   }
 }
