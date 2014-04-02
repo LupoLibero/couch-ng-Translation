@@ -1,5 +1,5 @@
 angular.module('translation').
-directive('translation', ($compile, $rootScope, $timeout, $filter)->
+directive('translation', ($compile, $rootScope, $filter)->
   return {
     restrict: 'E'
     scope: {
@@ -19,11 +19,8 @@ directive('translation', ($compile, $rootScope, $timeout, $filter)->
       scope.edit        = false
 
       $rootScope.$on('LangBarNewLanguage', ($event, lang)->
-        $timeout( -> # Wait that the language is loaded
-          scope.textTranslated  = (if scope.lang is lang then scope.text else '')
-          scope.translation     = true
-          scope.translationLang = lang
-        ,300)
+        scope.translation     = true
+        scope.translationLang = lang
       )
       $rootScope.$on('LangBarStopTranslate', ->
         scope.translation = false
@@ -31,6 +28,7 @@ directive('translation', ($compile, $rootScope, $timeout, $filter)->
 
       element.on('mouseenter', ->
         if scope.translation
+          scope.textTranslated = (if scope.lang is scope.translationLang then scope.text else '')
           scope.edit = true
       )
       element.on('mouseleave', ->
@@ -42,10 +40,12 @@ directive('translation', ($compile, $rootScope, $timeout, $filter)->
           id    = scope.default.id
           field = scope.field
           if scope.other.hasOwnProperty(id) and scope.other[id].hasOwnProperty(field)
-            scope.text           = scope.other[id][field]
-            scope.lang           = scope.other[id].lang
+            scope.text = scope.other[id][field].content
+            scope.rev  = scope.other[id][field]._rev
+            scope.lang = scope.other[id].lang
           else
-            scope.text = scope.default[field]
+            scope.text = scope.default[field].content
+            scope.rev  = scope.default[field]._rev
             scope.lang = scope.default.lang
         )
       else # If it's a translation in the interface
@@ -65,6 +65,7 @@ directive('translation', ($compile, $rootScope, $timeout, $filter)->
             key:   scope.expr
             id:    id
             lang:  scope.translationLang
+            rev:   scope.rev
           })
   }
 )
