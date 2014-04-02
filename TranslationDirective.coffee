@@ -19,9 +19,11 @@ directive('translation', ($compile, $rootScope, $timeout, $filter)->
       scope.edit        = false
 
       $rootScope.$on('LangBarNewLanguage', ($event, lang)->
-        scope.textTranslated  = (if scope.lang is lang then scope.text else '')
-        scope.translation     = true
-        scope.translationLang = lang
+        $timeout( -> # Wait that the language is loaded
+          scope.textTranslated  = (if scope.lang is lang then scope.text else '')
+          scope.translation     = true
+          scope.translationLang = lang
+        ,300)
       )
       $rootScope.$on('LangBarStopTranslate', ->
         scope.translation = false
