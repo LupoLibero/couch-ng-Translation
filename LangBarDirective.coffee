@@ -8,30 +8,32 @@ directive('langBar', ($rootScope) ->
       lang:      '='
       nbCard:    '='
     }
-    template: '<div class="btn-group">'+
-                '<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">'+
-                  '<img src="img/country-flags-png/{{lang}}.png"/>'+
-                  '<span class="caret"></span>'+
-                '</button>'+
-                '<ul class="dropdown-menu">'+
-                  '<li ng-repeat="(key, value) in langs">'+
-                    '<a ng-click="changeLangue(key)"><img src="img/country-flags-png/{{key}}.png"/> ({{ (value / nbCard * 100).toFixed(2) }} %)</a>'+
-                  '</li>'+
-                '</ul>'+
-              '</div>'+
-              '<div class="btn-group" ng-hide="translateMode">'+
-                '<button ng-disabled="disable" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">'+
-                  'Help Translate'+
-                '</button>'+
-                '<ul class="dropdown-menu">'+
-                  '<li ng-repeat="(key, value) in allLangs">'+
-                    '<a ng-click="addLangue(key)"><img src="img/country-flags-png/{{key}}.png"/>{{value}}</a>'+
-                  '</li>'+
-                '</ul>'+
-              '</div>'+
-              '<button ng-show="translateMode" ng-click="stopTranslate()" ng-disabled="disable" class="btn btn-default">'+
-                'Stop Translate'+
-              '</button>'
+    template: """
+              <div class="btn-group">
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" ng-disabled="translateMode">
+                  <img src="img/country-flags-png/{{lang}}.png"/>
+                  <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                  <li ng-repeat="(key, value) in langs">
+                    <a ng-click="changeLangue(key)"><img src="img/country-flags-png/{{key}}.png"/> ({{ (value / nbCard * 100).toFixed(2) }} %)</a>
+                  </li>
+                </ul>
+              </div>
+              <div class="btn-group" ng-hide="translateMode">
+                <button ng-disabled="disable" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                  Help Translate
+                </button>
+                <ul class="dropdown-menu">
+                  <li ng-repeat="(key, value) in allLangs">
+                    <a ng-click="addLangue(key)"><img src="img/country-flags-png/{{key}}.png"/>{{value}}</a>
+                  </li>
+                </ul>
+              </div>
+              <button ng-show="translateMode" ng-click="stopTranslate()" ng-disabled="disable" class="btn btn-default">
+                Stop Translate
+              </button>
+              """
 
     link: (scope, element, attrs) ->
       scope.translateMode = false
