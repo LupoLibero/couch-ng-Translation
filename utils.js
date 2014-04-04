@@ -1,6 +1,6 @@
 var fields = require('modules/ITS/types');
 
-exports.registerTranslation = function (doc, form, type, element, lang, rev) {
+exports.registerTranslation = function (doc, form, type, element, lang, from) {
   if(lang == undefined) {
     throw({forbidden: 'No language code'});
   }
@@ -32,6 +32,17 @@ exports.registerTranslation = function (doc, form, type, element, lang, rev) {
       }
     }
   }
+
+  if (lang == from) {
+    if (doc._rev != undefined || doc._rev != null) {
+      rev = parseInt(doc._rev)
+    } else { // Creation
+      rev = 1
+    }
+  } else {
+    rev = doc[element]._rev
+  }
+
   doc[element][lang] = {
     content: value,
     _rev:    rev,
