@@ -3,20 +3,22 @@ directive('translation', ($compile, $rootScope, $filter)->
   return {
     restrict: 'E'
     scope: {
-      field:   '@'
-      default: '='
-      other:   '='
-      save:    '&'
+      field:  '@'
+      object: '='
+      save:   '&'
     }
     transclude: true
-    template: '<span ng-hide="edit" class="text" ng-transclude></span>'+
-              '<span ng-show="edit" class="input">'+
-                '<input type="text" ng-model="textTranslated" ng-keypress="key($event, textTranslated)" popover="{{ text }}" popover-placement="bottom" popover-trigger="mouseenter"/>'+
-                '<button ng-click="edit=false">&gt;&gt;</button>'+
-              '</span>'
+    template: """
+              <span ng-hide="edit" class="text" ng-transclude></span>
+              <span ng-show="edit" class="input">
+                <input type="text" ng-model="textTranslated" ng-keypress="key($event, textTranslated)" popover="{{ text }}" popover-placement="bottom" popover-trigger="mouseenter"/>
+                <button ng-click="edit=false">&gt;&gt;</button>
+              </span>
+              """
     link: (scope, element, attrs) ->
       scope.translation = false
       scope.edit        = false
+      scope.lang        = scope.object?.lang
 
       $rootScope.$on('LangBarNewLanguage', ($event, lang)->
         scope.translation     = true
@@ -35,18 +37,10 @@ directive('translation', ($compile, $rootScope, $filter)->
         scope.edit = false
       )
 
-      if scope.default? # If we try to translate somethings in database
-        scope.$watch('other', ->
-          id    = scope.default.id
-          field = scope.field
-          if scope.other.hasOwnProperty(id) and scope.other[id].hasOwnProperty(field)
-            scope.text = scope.other[id][field].content
-            scope.rev  = scope.other[id][field]._rev
-            scope.lang = scope.other[id].lang
-          else
-            scope.text = scope.default[field].content
-            scope.rev  = scope.default[field]._rev
-            scope.lang = scope.default.lang
+      if scope.object? # If we try to translate somethings in database
+        scope.expr   = element.find('.text').text().trim()[2..-3]
+        $rootScope.$on('ChangeLanguageSuccess', ->
+          scope.text = scope.$parent.$eval(scope.expr)
         )
       else # If it's a translation in the interface
         scope.expr = element.find('.text').text().trim()
@@ -57,15 +51,14 @@ directive('translation', ($compile, $rootScope, $filter)->
 
       scope.key = ($event, content) ->
         if $event.keyCode == 13
-          id = (if scope.default? then scope.default.id else null)
           scope.edit = false
           scope.save({
             text:  content
             field: scope.field
             key:   scope.expr
-            id:    id
+            id:    scope.object?.id
             lang:  scope.translationLang
-            rev:   scope.rev
+            from:  scope.object?.lang
           })
   }
 )
