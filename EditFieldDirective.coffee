@@ -7,20 +7,20 @@ directive('editField', ($timeout)->
       type:    '@'
       lang:    '='
       save:    '&'
-    template: '<span ng-hide="edit" ng-click="edit=true" type="text">{{ ngModel }}</span>'+
+    template: """
+              <span ng-hide="edit" ng-click="edit=true" type="text">{{ ngModel }}</span>
 
-              '<input ng-show="type==\'input\' && translation" type="text" ng-model="ngModel" disabled/>'+
-              '<input ng-show="type==\'input\' && edit       " type="text" ng-model="value" style="width:80%" ng-disabled="loading" ng-keypress="keypress($event)" focus="edit" ng-blur="blur()"/>'+
+              <input ng-show="type=='input' && edit" type="text" ng-model="value" style="width:80%" ng-disabled="loading" ng-keypress="keypress($event)" focus="edit" ng-blur="blur()"/>
 
-              '<textarea ng-show="type == \'textarea\' && translation" ng-model="ngModel" disabled></textarea>'+
-              '<textarea ng-show="type == \'textarea\' && edit       " ng-model="value" ng-disabled="loading" ng-blur="blur()" ng-keypress="keypress($event)" focus="edit" ></textarea>'+
+              <textarea ng-show="type=='textarea' && edit" ng-model="value" ng-disabled="loading" ng-blur="blur()" ng-keypress="keypress($event)" focus="edit" ></textarea>
 
-              '<span ng-show="loading" us-spinner="{width:2,length:6,radius:5}"></span>'+
+              <span ng-show="loading" us-spinner="{width:2,length:6,radius:5}"></span>
 
-              '<span ng-show="edit && !loading">'+
-                '<button ng-click="goSave()" class="btn btn-default glyphicon glyphicon-ok"     style="color:green;"></button>'+
-                '<button ng-click="cancel()" class="btn btn-default glyphicon glyphicon-remove" style="color:red;  "></button>'+
-              '</span>'
+              <span ng-show="edit && !loading">
+                <button ng-click="goSave()" class="btn btn-default glyphicon glyphicon-ok"     style="color:green;"></button>
+                <button ng-click="cancel()" class="btn btn-default glyphicon glyphicon-remove" style="color:red;  "></button>'
+              </span>
+              """
 
     link: (scope, element, attrs) ->
       scope.change = false
@@ -47,7 +47,7 @@ directive('editField', ($timeout)->
           scope.goSave()
         else if $event.keyCode == 10 && $event.ctrlKey # For ctrl+enter for Chrome
           scope.goSave()
-        else if $event.key == 27
+        else if $event.keyCode == 27
           scope.edit = false
         else
           scope.change = true
