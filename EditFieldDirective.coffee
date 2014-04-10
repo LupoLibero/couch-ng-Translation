@@ -7,6 +7,7 @@ directive('editField', ($timeout)->
       type:    '@'
       lang:    '='
       save:    '&'
+      rev:     '='
     template: """
               <span ng-hide="edit" ng-click="edit=true" type="text">{{ ngModel }}</span>
 
@@ -25,6 +26,7 @@ directive('editField', ($timeout)->
     link: (scope, element, attrs) ->
       scope.change = false
       scope.edit   = false
+      scope._rev   = null
 
       scope.$on('EditFieldTranslationOn', ->
         scope.translation = true
@@ -35,6 +37,12 @@ directive('editField', ($timeout)->
         scope.translation = false
       )
 
+      scope.$watch('edit', (value)->
+        if value
+          scope._rev = scope.rev
+        else
+          scope._rev = null
+      )
       scope.blur = ->
         $timeout( ->
           scope.edit = false
@@ -58,7 +66,10 @@ directive('editField', ($timeout)->
 
         scope.loading = true
 
-        scope.save({value:scope.value}).then(
+        scope.save({
+          value: scope.value
+          rev:   scope._rev
+        }).then(
           (data) -> #Success
             scope.loading     = false
             scope.translation = false
