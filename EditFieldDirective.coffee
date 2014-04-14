@@ -69,6 +69,7 @@ directive('editField', ($timeout)->
         scope.save({
           value: scope.value
           rev:   scope._rev
+          lang:  scope.lang
         }).then(
           (data) -> #Success
             scope.loading     = false
