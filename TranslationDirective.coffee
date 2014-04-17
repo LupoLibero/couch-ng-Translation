@@ -18,7 +18,11 @@ directive('translation', ($compile, $rootScope, $filter)->
     link: (scope, element, attrs) ->
       scope.translation = false
       scope.edit        = false
-      scope.lang        = scope.object?.lang
+
+      if scope.object? # If we try to translate somethings in database
+        scope.expr = element.find('.text').text().trim()[2..-3]
+      else # If it's a translation in the interface
+        scope.expr = element.find('.text').text().trim()
 
       $rootScope.$on('LangBarNewLanguage', ($event, lang)->
         scope.translation     = true
@@ -30,24 +34,16 @@ directive('translation', ($compile, $rootScope, $filter)->
 
       element.on('mouseenter', ->
         if scope.translation
-          scope.textTranslated = (if scope.lang is scope.translationLang then scope.text else '')
+          if scope.object?
+            scope.text = scope.$parent.$eval(scope.expr)
+          else
+            scope.text = $filter('translate')(scope.expr)
+          scope.textTranslated = (if scope.object[scope.field].lang is scope.translationLang then scope.text else '')
           scope.edit = true
       )
       element.on('mouseleave', ->
         scope.edit = false
       )
-
-      if scope.object? # If we try to translate somethings in database
-        scope.expr   = element.find('.text').text().trim()[2..-3]
-        $rootScope.$on('ChangeLanguageSuccess', ->
-          scope.text = scope.$parent.$eval(scope.expr)
-        )
-      else # If it's a translation in the interface
-        scope.expr = element.find('.text').text().trim()
-        $rootScope.$on('$translateChangeSuccess', ($event, language)->
-          scope.lang = language
-          scope.text = $filter('translate')(scope.expr)
-        )
 
       scope.key = ($event, content) ->
         if $event.keyCode == 13
