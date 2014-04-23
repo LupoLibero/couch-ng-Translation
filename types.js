@@ -9,6 +9,6 @@ exports.local = new Type('local', {
     remove: permissions.hasRole('_admin')
   },
   fields: {
-    _activity: activityField(),
+    activity: activityField(),
   },
 });
