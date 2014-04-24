@@ -36,9 +36,9 @@ directive('translation', ($compile, $rootScope, $filter)->
         if scope.translation
           if scope.object?
             scope.text = scope.$parent.$eval(scope.expr)
+            scope.textTranslated = (if scope.object[scope.field].lang is scope.translationLang then scope.text else '')
           else
             scope.text = $filter('translate')(scope.expr)
-          scope.textTranslated = (if scope.object[scope.field].lang is scope.translationLang then scope.text else '')
           scope.edit = true
       )
       element.on('mouseleave', ->
