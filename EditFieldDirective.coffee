@@ -4,7 +4,6 @@ directive('editField', ($timeout)->
     restrict: 'E'
     scope:
       ngModel: '='
-      type:    '@'
       lang:    '='
       save:    '&'
       rev:     '='
@@ -12,9 +11,6 @@ directive('editField', ($timeout)->
               <span ng-hide="edit" ng-click="edit=true" type="text">{{ ngModel }}</span>
 
               <input ng-show="type=='input' && edit" type="text" ng-model="value" style="width:80%" ng-disabled="loading" ng-keypress="keypress($event)" focus="edit" ng-blur="blur()"/>
-
-              <textarea ng-show="type=='textarea' && edit" ng-model="value" ng-disabled="loading" ng-blur="blur()" ng-keypress="keypress($event)" focus="edit" ></textarea>
-
               <span ng-show="loading" us-spinner="{width:2,length:6,radius:5}"></span>
 
               <span ng-show="edit && !loading">
@@ -49,11 +45,7 @@ directive('editField', ($timeout)->
         , 300)
 
       scope.keypress = ($event) ->
-        if $event.keyCode == 13 && scope.type == 'input'
-          scope.goSave()
-        else if $event.keyCode == 13 && $event.ctrlKey
-          scope.goSave()
-        else if $event.keyCode == 10 && $event.ctrlKey # For ctrl+enter for Chrome
+        if $event.keyCode == 13
           scope.goSave()
         else if $event.keyCode == 27
           scope.edit = false
