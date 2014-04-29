@@ -10,7 +10,7 @@ directive('editField', ($timeout)->
     template: """
               <span ng-hide="edit" ng-click="edit=true" type="text">{{ ngModel }}</span>
 
-              <input ng-show="type=='input' && edit" type="text" ng-model="value" style="width:80%" ng-disabled="loading" ng-keypress="keypress($event)" focus="edit" ng-blur="blur()"/>
+              <input ng-show="edit" type="text" ng-model="value" style="width:80%" ng-disabled="loading" ng-keypress="keypress($event)" focus="edit" ng-blur="blur()"/>
               <span ng-show="loading" us-spinner="{width:2,length:6,radius:5}"></span>
 
               <span ng-show="edit && !loading">
@@ -33,8 +33,8 @@ directive('editField', ($timeout)->
         scope.translation = false
       )
 
-      scope.$watch('edit', (value)->
-        if value
+      scope.$watch('edit', (edit)->
+        if edit
           scope._rev = scope.rev
         else
           scope._rev = null
