@@ -35,7 +35,8 @@ directive('editField', ($timeout)->
 
       scope.$watch('edit', (edit)->
         if edit
-          scope._rev = scope.rev
+          scope._rev  = angular.copy(scope.rev)
+          scope.value = angular.copy(scope.ngModel)
         else
           scope._rev = null
       )
